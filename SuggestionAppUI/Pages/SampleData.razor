@@ -1,0 +1,176 @@
+﻿@page "/SampleData"
+@inject ICategoryData categoryData
+@inject IStatusData statusData
+@inject IUserData userData
+@inject ISuggestionData suggestionData
+
+
+<h3>Sample Data</h3>
+
+@if (categoriesCreated)
+{
+    <h4>Categories have been created</h4>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateCategories">Create Categories</button>
+
+}
+
+@if (statusesCreated)
+{
+    <h4>Statuses have been created</h4>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateStatuses">Create Statuses</button>
+}
+
+
+
+@code {
+
+    private bool categoriesCreated = false;
+
+    private bool statusesCreated = false;
+
+    private async Task GenerateSampleData()
+    {
+        UserModel user = new()
+        {
+            FirstName = "Tim",
+            LastName = "Corey",
+            DisplayName = "SampleTime",
+            ObjectIdentifier = "abc-123",
+            EmailAddress = "tim@test.com"
+        };
+
+
+        await userData.CreateUser(user);
+
+        var foundUser = await userData.GetUserFromAuthentication("abc-123");
+
+        var categories = await categoryData.GetAllCategories();
+        var statuses = await statusData.GetAllStatuses();
+
+        SuggestionModel suggestion = new()
+        {
+            Author = new BasicUserModel(foundUser),
+            Suggestion = "our first suggestion",
+            Description = "this is a suggestion",
+            Category = categories[0]
+        };
+
+        await suggestionData.CreateSuggestion(suggestion);
+
+        SuggestionModel suggestion1 = new()
+        {
+            Author = new BasicUserModel(foundUser),
+            Suggestion = "our first suggestion",
+            Description = "this is a suggestion",
+            Category = categories[1],
+            Status = statuses[0]
+        };
+
+        await suggestionData.CreateSuggestion(suggestion1);
+    }
+
+    private async Task CreateCategories()
+    {
+        var categories = await categoryData.GetAllCategories();
+
+        if (categories?.Count > 0)
+        {
+            return;
+        }
+
+        CategoryModel cat1 = new()
+        {
+            CategoryName = "Courses",
+            CategoryDescription = "Full paid courses."
+        };
+
+        await categoryData.CreateCategory(cat1);
+
+        CategoryModel cat2 = new()
+        {
+            CategoryName = "Dev Questions",
+            CategoryDescription = "Advice on beign a developer."
+        };
+
+        await categoryData.CreateCategory(cat2);
+
+        CategoryModel cat3 = new()
+        {
+            CategoryName = "In-Depth Tutorials",
+            CategoryDescription = "A deep-dive video on how to use a topic."
+        };
+
+        await categoryData.CreateCategory(cat3);
+
+        CategoryModel cat4 = new()
+        {
+            CategoryName = "10-minute Training",
+            CategoryDescription = "A quick \"how do I use this?\" video."
+        };
+
+        await categoryData.CreateCategory(cat4);
+
+        CategoryModel cat5 = new()
+        {
+            CategoryName = "Other",
+            CategoryDescription = "Not sure which category this fits in."
+        };
+
+        await categoryData.CreateCategory(cat5);
+        categoriesCreated = true;
+    }
+
+
+    private async Task CreateStatuses()
+    {
+        var statuses = await statusData.GetAllStatuses();
+
+        if (statuses?.Count > 0)
+        {
+            return;
+        }
+
+        StatusModel status = new()
+        {
+            StatusName = "Completed",
+            StatusDescription = "The suggestion was accepted."
+        };
+
+        await statusData.CreateStatus(status);
+
+        StatusModel status1 = new()
+        {
+            StatusName = "Watching",
+            StatusDescription = "The suggestion is interesting"
+        };
+
+        await statusData.CreateStatus(status1);
+
+        StatusModel status2 = new()
+        {
+            StatusName = "Upcoming",
+            StatusDescription = "The suggestion was accepted and will be released soon."
+        };
+
+        await statusData.CreateStatus(status2);
+
+        StatusModel status3 = new()
+        {
+            StatusName = "Dismissed",
+            StatusDescription = "The suggestion won't be undertaken."
+        };
+
+        await statusData.CreateStatus(status3);
+        statusesCreated = true;
+    }
+
+}
+
+
+
