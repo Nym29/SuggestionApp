@@ -36,13 +36,13 @@
     </div>
 </div>
 
-@if (suggestion?.SuggestionStatus is not null)
+@if (suggestion?.Status is not null)
     {
         <div>
             <div>
                 <div></div>
                 <div>
-                    @suggestion.SuggestionStatus.StatusName
+                    @suggestion.Status.StatusName
                 </div>
                 <div>
                     @((MarkupString)suggestion.OwnerNotes) 

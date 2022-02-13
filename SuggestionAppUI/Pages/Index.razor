@@ -10,10 +10,10 @@
 <h1 class="">Training Suggestions</h1>
 
 <div>
-    <button>Suggestion</button>
+    <button>Suggest</button>
 </div>
 
-<div >
+<div>
     <div>@suggestions?.Count Suggestions</div>
     <div>
         <button @onclick="(() => OrderByNew(true))">New</button>
@@ -22,38 +22,39 @@
     <div>
         <input type="text" placeholder="Search"
                aria-label="Search box"
-               @oninput="((txt)=>OnSearchInput((string)txt.Value))"/>
+               @oninput="((txt)=>OnSearchInput((string)txt.Value))" />
     </div>
 </div>
 
 <div>
     <div>
         @if (suggestions is not null)
-            {
-                <Virtualize Items="@suggestions" Context="s" OverscanCount="10">
+        {
+            <Virtualize Items="@suggestions" Context="s" OverscanCount="10">
+                <div>
+                    @*<div onclick="(() => VoteUp(s))"></div>*@
                     <div>
-                        @*<div onclick="(() => VoteUp(s))"></div>*@
                         <div>@GetUpvoteTopText(s)</div>
                         <span class="oi oi-caret-top"></span>
-                        <div>@GetUpvoteTopText(s)</div>
+                        <div>@GetUpvoteButtomText(s)</div>
+                    </div>
+                
+                    <div @onclick="(() => OpenDetails(s))">
+                        @s.Suggestion
                     </div>
                     <div>
                         <div @onclick="(() => OpenDetails(s))">
-                            @s.Suggestion
-                        </div>
-                        <div>
-                            <div @onclick="(() => OpenDetails(s))">
-                                @s.Category?.CategoryName
-                            </div>
-                        </div>
-                        <div>
-                            <div >
-                                @s.SuggestionStatus?.StatusName
-                            </div>
+                            @s.Category?.CategoryName
                         </div>
                     </div>
-                </Virtualize>
-            }
+                    <div>
+                        <div>
+                            @s.Status?.StatusName
+                        </div>
+                    </div>
+                </div>
+            </Virtualize>
+        }
     </div>
     <div>
         @if (categories is not null)
@@ -134,20 +135,20 @@
 
         if (selectedCategory != "All")
         {
-            output.Where(s => s.Category?.CategoryName == selectedCategory).ToList();
+            output = output.Where(s => s.Category?.CategoryName == selectedCategory).ToList();
         }
 
         if (selectedStatus != "All")
         {
-            output.Where(s => s.SuggestionStatus?.StatusName == selectedStatus).ToList();
+            output = output.Where(s => s.Status?.StatusName == selectedStatus).ToList();
 
         }
 
         if (string.IsNullOrWhiteSpace(searchText) == false)
         {
-            output.Where(
-                s => s.Suggestion.Contains(searchText,StringComparison.InvariantCultureIgnoreCase)
-                || s.Description.Contains(searchText,StringComparison.InvariantCultureIgnoreCase)
+            output = output.Where(
+                s => s.Suggestion.Contains(searchText, StringComparison.InvariantCultureIgnoreCase)
+                || s.Description.Contains(searchText, StringComparison.InvariantCultureIgnoreCase)
                 ).ToList();
         }
 
@@ -158,7 +159,7 @@
         else
         {
             output = output.OrderByDescending(s => s.UserVotes.Count)
-                            .ThenByDescending(s =>s.DateCreated).ToList();
+                            .ThenByDescending(s => s.DateCreated).ToList();
         }
 
         suggestions = output;
@@ -228,7 +229,5 @@
     }
 
 }
-
-
 
 
