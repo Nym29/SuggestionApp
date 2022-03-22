@@ -1,0 +1,27 @@
+﻿@inject NavigationManager navManager
+
+
+<div>
+    <div>
+        <div>
+            <div>
+                <div>Authorization Required</div>
+                <p>You're not authorized to be here</p>
+            </div>
+            <div>
+                <button @onclick="ClosePage">
+
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    private void ClosePage()
+    {
+        navManager.NavigateTo("/");
+    }
+}
